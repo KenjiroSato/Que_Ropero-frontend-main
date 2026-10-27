@@ -1,0 +1,20 @@
+<form *ngIf="usuario">
+  <div class="mb-3">
+    <label for="nombre" class="form-label">Nombre Completo</label>
+    <input type="text" class="form-control" id="nombre" name="nombre" [(ngModel)]="usuario.nombre">
+  </div>
+
+  <div class="mb-3">
+    <label for="correo" class="form-label">Correo Electrónico</label>
+    <input type="email" class="form-control" id="correo" name="correo" [(ngModel)]="usuario.correo">
+  </div>
+
+  <div class="mb-3">
+    <label for="tipoUsuario" class="form-label">Rol del Usuario</label>
+    <select class="form-select" id="tipoUsuario" name="tipoUsuario" [(ngModel)]="usuario.tipoUsuario">
+      <option value="Cliente">Cliente (Usuario Final)</option>
+      <option value="Administrador">Administrador</option>
+      <option value="Operador Logistico">Operador Logístico</option>
+    </select>
+  </div>
+</form>

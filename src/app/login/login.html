@@ -1,0 +1,86 @@
+<div class="login-container">
+  <div class="login-card" style="width: 410px; max-height: 92vh; overflow-y: auto;">
+    <div style="text-align: center; margin-bottom: 10px;">
+      <span style="font-size: 2.2rem;">🧺</span>
+      <h2 style="margin-bottom: 4px; color: #00d2ff;">QUE ROPERO</h2>
+      <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1rem;">
+        Alquiler de Lavadoras a Domicilio en Itagüí
+      </p>
+    </div>
+
+    <!-- MODO 1: INICIAR SESIÓN -->
+    <form *ngIf="!modoRegistro" #loginform="ngForm" (ngSubmit)="login()" autocomplete="off">
+      <h3 style="text-align: center; color: #fff; font-size: 1.2rem; margin-bottom: 1rem;">¡Hola de nuevo!</h3>
+
+      <div class="form-group">
+        <label for="usr">Correo electrónico o Usuario</label>
+        <input type="text" id="usr" name="usr" placeholder="ejemplo@queropero.com o admin" required [(ngModel)]="usr">
+      </div>
+
+      <div class="form-group">
+        <label for="pwd">Contraseña</label>
+        <input type="password" id="pwd" name="pwd" placeholder="••••••••" required [(ngModel)]="pwd">
+      </div>
+
+      <button type="submit" class="btn" [disabled]="!loginform.form.valid || cargando">
+        {{ cargando ? 'Validando en SQL Server...' : 'INICIAR SESIÓN' }}
+      </button>
+
+      <div class="extra-links">
+        <a href="javascript:void(0)" (click)="cambiarModo(true)" class="link" style="color: #00d2ff; font-weight: bold;">
+          ¿No tienes una cuenta? Regístrate aquí
+        </a>
+      </div>
+    </form>
+
+    <!-- MODO 2: REGISTRO DE NUEVO USUARIO (RF002) -->
+    <form *ngIf="modoRegistro" #regForm="ngForm" (ngSubmit)="registrar()" autocomplete="off">
+      <h3 style="text-align: center; color: #fff; font-size: 1.2rem; margin-bottom: 1rem;">Crear Cuenta en Que Ropero</h3>
+
+      <div class="form-group">
+        <label>Nombre Completo *</label>
+        <input type="text" name="nombre" required [(ngModel)]="nuevoUsuario.nombre" placeholder="Ej: Miguel Ángel Castañeda">
+      </div>
+
+      <div class="form-group">
+        <label>Correo Electrónico (E-mail) *</label>
+        <input type="email" name="correo" required [(ngModel)]="nuevoUsuario.correo" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label>Celular *</label>
+        <input type="text" name="celular" required [(ngModel)]="nuevoUsuario.celular" placeholder="300 123 4567">
+      </div>
+
+      <div class="form-group">
+        <label>Dirección de Entrega (Itagüí) *</label>
+        <input type="text" name="direccion" required [(ngModel)]="nuevoUsuario.direccion" placeholder="Barrio San José, Calle 36 #50A, Itagüí">
+      </div>
+
+      <div class="form-group">
+        <label>Documento (C.C.)</label>
+        <input type="text" name="documento" [(ngModel)]="nuevoUsuario.documento" placeholder="1036000000">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña *</label>
+        <input type="password" name="password" required [(ngModel)]="nuevoUsuario.password" placeholder="Mínimo 4 caracteres">
+      </div>
+
+      <div class="form-group">
+        <label>Confirmar Contraseña *</label>
+        <input type="password" name="confirmarPassword" required [(ngModel)]="confirmarPassword" placeholder="Repite tu contraseña">
+      </div>
+
+      <button type="submit" class="btn" [disabled]="!regForm.form.valid || cargando">
+        {{ cargando ? 'Guardando en SQL Server...' : 'REGISTRARSE' }}
+      </button>
+
+      <div class="extra-links">
+        <a href="javascript:void(0)" (click)="cambiarModo(false)" class="link" style="color: #00d2ff; font-weight: bold;">
+          ¿Ya tienes una cuenta? Inicia sesión
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
