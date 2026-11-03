@@ -45,5 +45,6 @@ Thumbs.db
 
 node_modules/
 que-ropero-backend/node_modules/
+dist/
 .env
 que-ropero-backend/.env
