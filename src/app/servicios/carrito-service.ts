@@ -1,68 +1,52 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Lavadora } from '../models/usuario';
+import { ItemCarrito, ItemCarritoSchema, Lavadora, LavadoraSchema, ReservaSchema, SolicitudReserva } from '../models/usuario';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class CarritoService {
-  private apiUrl = environment.urlApiBase;
-  productos: any[] = [];
-
+  private readonly apiUrl = environment.urlApiBase;
+  private readonly productos = signal<readonly ItemCarrito[]>([]);
+  readonly items = this.productos.asReadonly();
+  readonly storageError = signal('');
   constructor(private http: HttpClient) {
-    const guardado = localStorage.getItem('carritoLavadoras');
-    if (guardado) {
-      this.productos = JSON.parse(guardado);
-    }
+    try {
+      localStorage.removeItem('usuarioQueRopero');
+      const raw = localStorage.getItem('carritoLavadoras');
+      const parsed = ItemCarritoSchema.array().max(20).safeParse(raw ? JSON.parse(raw) : []);
+      if (parsed.success) this.productos.set(parsed.data);
+      else localStorage.removeItem('carritoLavadoras');
+    } catch { this.storageError.set('El carrito no pudo recuperarse. Puedes volver a agregar tus equipos.'); }
   }
-
-  // Obtener lavadoras desde SQL Server
-  obtenerCatalogoLavadoras(): Observable<Lavadora[]> {
-    return this.http.get<Lavadora[]>(`${this.apiUrl}/lavadoras`);
+  obtenerCatalogoLavadoras() {
+    return this.http.get<unknown>(`${this.apiUrl}/lavadoras`).pipe(map(data => LavadoraSchema.array().parse(data)));
   }
-
-  agregarProducto(nombre: string, precio: number, imagen: string, idLavadora: number = 1, horasAlquiler: number = 4, modelo: string = '') {
-    const existente = this.productos.find(p => p.idLavadora === idLavadora && p.nombre === nombre);
-    if (existente) {
-      existente.horasAlquiler += horasAlquiler;
-    } else {
-      this.productos.push({ idLavadora, nombre, precio, imagen, horasAlquiler, modelo });
-    }
-    this.sincronizarStorage();
+  agregarProducto(lavadora: Lavadora): void {
+    if (this.productos().some(item => item.idLavadora === lavadora.idLavadora)) return;
+    this.productos.update(items => [...items, ItemCarritoSchema.parse({ ...lavadora, horasAlquiler: 4 })]);
+    this.persistir();
   }
-
-  obtenerProductos(): any[] {
-    return this.productos;
+  actualizarHoras(id: number, horas: number): void {
+    if (!Number.isInteger(horas) || horas < 1 || horas > 72) return;
+    this.productos.update(items => items.map(item => item.idLavadora === id ? { ...item, horasAlquiler: horas } : item));
+    this.persistir();
   }
-
-  eliminarItem(index: number): void {
-    this.productos.splice(index, 1);
-    this.sincronizarStorage();
+  eliminarItem(id: number): void {
+    this.productos.update(items => items.filter(item => item.idLavadora !== id)); this.persistir();
   }
-
-  vaciarCarrito(): void {
-    this.productos = [];
-    localStorage.removeItem('carritoLavadoras');
+  vaciarCarrito(): void { this.productos.set([]); this.persistir(); }
+  private persistir(): void {
+    try { localStorage.setItem('carritoLavadoras', JSON.stringify(this.productos())); this.storageError.set(''); }
+    catch { this.storageError.set('No pudimos guardar el carrito en este dispositivo. No recargues antes de confirmar.'); }
   }
-
-  private sincronizarStorage(): void {
-    localStorage.setItem('carritoLavadoras', JSON.stringify(this.productos));
+  registrarAlquilerEnBD(payload: SolicitudReserva, key: string) {
+    return this.http.post<unknown>(`${this.apiUrl}/reservas`, payload, { headers: { 'Idempotency-Key': key } });
   }
-
-  // Guardar alquiler y pago en SQL Server
-  registrarAlquilerEnBD(payload: { idUsuario: number; direccionEntrega: string; metodoPago: string; items: any[] }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/reservas`, payload);
+  obtenerMisAlquileres() {
+    return this.http.get<unknown>(`${this.apiUrl}/reservas`).pipe(map(data => ReservaSchema.array().parse(data)));
   }
-
-  // Consultar alquileres del usuario en SQL Server
-  obtenerMisAlquileres(idUsuario: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/reservas/usuario/${idUsuario}`);
-  }
-
-  // Finalizar alquiler / Devolver lavadora
-  finalizarAlquiler(idReserva: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/reservas/${idReserva}/finalizar`, {});
-  }
+  solicitarRecoleccion(id: number) { return this.http.put<unknown>(`${this.apiUrl}/reservas/${id}/recoleccion`, {}); }
+  finalizarAlquiler(id: number) { return this.http.put<unknown>(`${this.apiUrl}/reservas/${id}/finalizar`, {}); }
+  confirmarPago(id: number) { return this.http.put<unknown>(`${this.apiUrl}/reservas/${id}/pago`, {}); }
 }

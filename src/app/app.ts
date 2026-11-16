@@ -1,20 +1,3 @@
-import { Component, signal } from '@angular/core';
-import { Route, Router } from '@angular/router';
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.html',
-  standalone: false,
-  styleUrl: './app.css'
-})
-export class App {
-  constructor(private router: Router) {
-
-  }
-
-  isLoginRoute(): boolean {
-    return this.router.url === '/login';
-  }
-  protected readonly title = signal('Que_Ropero');
-
-}
+import { Component } from '@angular/core';
+@Component({ selector: 'app-root', standalone: false, templateUrl: './app.html', styleUrl: './app.css' })
+export class App {}

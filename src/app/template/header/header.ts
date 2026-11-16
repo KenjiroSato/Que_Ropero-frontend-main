@@ -1,27 +1,15 @@
+import { ThemeService } from '../../servicios/theme-service';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UsuarioService } from '../../servicios/usuario';
-import { Usuario } from '../../models/usuario';
-
-@Component({
-  selector: 'app-header',
-  standalone: false,
-  templateUrl: './header.html',
-  styleUrl: './header.css'
-})
+import { CarritoService } from '../../servicios/carrito-service';
+import { mensajeError } from '../../servicios/api-error';
+@Component({ selector: 'app-header', standalone: false, templateUrl: './header.html', styleUrl: './header.css' })
 export class Header {
-  constructor(private usuarioService: UsuarioService, private router: Router) {}
-
-  get usuarioActual(): Usuario | null {
-    return this.usuarioService.obtenerSesion();
-  }
-
-  get esAdmin(): boolean {
-    return this.usuarioService.esAdmin();
-  }
-
+  menuAbierto = false;
+  error = '';
+  constructor(public theme: ThemeService, public usuarios: UsuarioService, public carrito: CarritoService, private router: Router) {}
   salir(): void {
-    this.usuarioService.cerrarSesion();
-    this.router.navigate(['/login']);
+    this.usuarios.cerrarSesion().subscribe({ next: () => { this.carrito.vaciarCarrito(); this.menuAbierto = false; this.router.navigate(['/']); }, error: error => this.error = mensajeError(error) });
   }
 }

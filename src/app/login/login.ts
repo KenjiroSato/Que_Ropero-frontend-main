@@ -1,90 +1,27 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UsuarioService } from '../servicios/usuario';
-import Swal from 'sweetalert2';
-
-@Component({
-  selector: 'app-login',
-  standalone: false,
-  templateUrl: './login.html',
-  styleUrl: './login.css'
-})
+import { CarritoService } from '../servicios/carrito-service';
+import { mensajeError } from '../servicios/api-error';
+@Component({ selector: 'app-login', standalone: false, templateUrl: './login.html', styleUrl: './login.css' })
 export class Login {
-  usr: string = '';
-  pwd: string = '';
-  modoRegistro: boolean = false;
-  cargando: boolean = false;
-  confirmarPassword: string = '';
-
-  nuevoUsuario = {
-    nombre: '',
-    correo: '',
-    celular: '',
-    direccion: 'Itagüí, Antioquia',
-    documento: '',
-    password: ''
-  };
-
-  constructor(private router: Router, private usuarioService: UsuarioService) {}
-
-  cambiarModo(esRegistro: boolean) {
-    this.modoRegistro = esRegistro;
+  usr = ''; pwd = ''; modoRegistro = false; cargando = false; confirmarPassword = ''; error = '';
+  nuevoUsuario = { nombre: '', correo: '', celular: '', direccion: '', documento: '', password: '' };
+  constructor(private router: Router, private usuarios: UsuarioService, private carrito: CarritoService) {}
+  cambiarModo(registro: boolean): void { this.modoRegistro = registro; this.error = ''; }
+  login(): void {
+    if (this.cargando || !this.usr.trim() || !this.pwd) return;
+    this.enviar(false);
   }
-
-  login() {
-    this.cargando = true;
-    this.usuarioService.login(this.usr, this.pwd).subscribe({
-      next: (res) => {
-        this.cargando = false;
-        this.usuarioService.guardarSesion(res.usuario);
-        Swal.fire({
-          icon: 'success',
-          title: `¡Bienvenido, ${res.usuario.nombre}!`,
-          text: 'Conectado a QueRoperoDB en SQL Server',
-          timer: 1800,
-          showConfirmButton: false
-        });
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        this.cargando = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error de autenticación',
-          text: err.error?.mensaje || 'Verifica que el Backend (node server.js) esté encendido.'
-        });
-      }
-    });
+  registrar(): void {
+    if (this.cargando) return;
+    if (this.nuevoUsuario.password !== this.confirmarPassword) { this.error = 'Las contraseñas no coinciden.'; return; }
+    this.enviar(true);
   }
-
-  registrar() {
-    if (this.nuevoUsuario.password !== this.confirmarPassword) {
-      Swal.fire('Atención', 'Las contraseñas no coinciden', 'warning');
-      return;
-    }
-
-    this.cargando = true;
-    this.usuarioService.registrar(this.nuevoUsuario).subscribe({
-      next: (res) => {
-        this.cargando = false;
-        this.usuarioService.guardarSesion(res.usuario);
-        Swal.fire({
-          icon: 'success',
-          title: '¡Registro Exitoso!',
-          text: 'Tu cuenta fue guardada en SQL Server.',
-          timer: 2000,
-          showConfirmButton: false
-        });
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        this.cargando = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'No se pudo registrar',
-          text: err.error?.mensaje || 'Error conectando con el servidor.'
-        });
-      }
-    });
+  private enviar(registro: boolean): void {
+    this.cargando = true; this.error = '';
+    const request = registro ? this.usuarios.registrar(this.nuevoUsuario) : this.usuarios.login(this.usr, this.pwd);
+    request.subscribe({ next: () => { this.cargando = false; this.router.navigate([this.carrito.items().length ? '/compras' : '/productos']); },
+      error: error => { this.error = mensajeError(error); this.cargando = false; } });
   }
 }

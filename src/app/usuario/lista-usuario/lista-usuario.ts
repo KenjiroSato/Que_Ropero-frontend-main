@@ -1,102 +1,36 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Usuario } from '../../models/usuario';
 import { UsuarioService } from '../../servicios/usuario';
-import { Modal } from 'bootstrap';
-import Swal from 'sweetalert2';
-
-@Component({
-  selector: 'app-lista-usuario',
-  standalone: false,
-  templateUrl: './lista-usuario.html',
-  styleUrls: ['./lista-usuario.css']
-})
+import { mensajeError } from '../../servicios/api-error';
+@Component({ selector: 'app-lista-usuario', standalone: false, templateUrl: './lista-usuario.html', styleUrl: './lista-usuario.css' })
 export class ListaUsuario implements OnInit {
-  @ViewChild('modalUsuario') modal: ElementRef | undefined;
-  vectorUsuarios: Usuario[] = [];
-  usuarioSeleccionado: Usuario | undefined = undefined;
-  isnew: boolean = false;
-
-  constructor(private usuarioService: UsuarioService) {}
-
-  ngOnInit(): void {
-    this.cargarUsuariosDesdeBD();
-  }
-
+  vectorUsuarios: Usuario[] = []; usuarioSeleccionado: Usuario | null = null;
+  isnew = false; cargando = false; guardando = false; error = ''; anuncio = ''; password = '';
+  constructor(private usuarios: UsuarioService) {}
+  ngOnInit(): void { this.cargarUsuariosDesdeBD(); }
   cargarUsuariosDesdeBD(): void {
-    this.usuarioService.getUsuarios().subscribe({
-      next: (usuarios) => this.vectorUsuarios = usuarios,
-      error: () => console.error('No se pudieron cargar los usuarios desde SQL Server')
-    });
+    this.cargando = true; this.error = '';
+    this.usuarios.getUsuarios().subscribe({ next: data => { this.vectorUsuarios = data; this.cargando = false; },
+      error: error => { this.error = mensajeError(error); this.cargando = false; } });
   }
-
-  editarUsuario(usuario: Usuario) {
-    this.isnew = false;
-    this.usuarioSeleccionado = { ...usuario };
+  editarUsuario(usuario: Usuario): void { this.isnew = false; this.usuarioSeleccionado = { ...usuario }; this.error = ''; }
+  NuevoUsuario(): void {
+    this.isnew = true; this.password = ''; this.error = '';
+    this.usuarioSeleccionado = { id: 0, nombre: '', correo: '', celular: '', direccion: '', documento: '', tipoUsuario: 'Cliente', fechaRegistro: new Date().toISOString() };
   }
-
-  NuevoUsuario() {
-    this.isnew = true;
-    this.usuarioSeleccionado = { id: 0, nombre: '', correo: '', fechaRegistro: new Date() };
+  guardarUsuario(): void {
+    const user = this.usuarioSeleccionado;
+    if (!user || this.guardando) return;
+    this.guardando = true; this.error = '';
+    const request = this.isnew ? this.usuarios.crearUsuario({ nombre: user.nombre, correo: user.correo, celular: user.celular,
+      direccion: user.direccion, documento: user.documento, password: this.password, tipoUsuario: user.tipoUsuario }) :
+      this.usuarios.actualizarUsuario(user.id, { nombre: user.nombre, correo: user.correo, celular: user.celular, direccion: user.direccion, tipoUsuario: user.tipoUsuario });
+    request.subscribe({ next: () => { this.guardando = false; this.usuarioSeleccionado = null; this.password = ''; this.anuncio = 'Usuario guardado.'; this.cargarUsuariosDesdeBD(); },
+      error: error => { this.error = mensajeError(error); this.guardando = false; } });
   }
-
-  guardarUsuario() {
-    if (!this.usuarioSeleccionado) return;
-
-    if (this.isnew) {
-      const correoGenerado = this.usuarioSeleccionado.correo ||
-        `${this.usuarioSeleccionado.nombre.replace(/\s+/g, '').toLowerCase()}@queropero.com`;
-      this.usuarioService.registrar({
-        nombre: this.usuarioSeleccionado.nombre,
-        correo: correoGenerado,
-        password: '1234',
-        direccion: 'Itagüí, Antioquia'
-      }).subscribe({
-        next: () => {
-          this.cargarUsuariosDesdeBD();
-          this.cerrarModal(this.modal);
-          Swal.fire({ title: 'Usuario guardado en SQL Server', icon: 'success' });
-        }
-      });
-    } else {
-      this.usuarioService.actualizarUsuario(this.usuarioSeleccionado.id, this.usuarioSeleccionado).subscribe({
-        next: () => {
-          this.cargarUsuariosDesdeBD();
-          this.cerrarModal(this.modal);
-          Swal.fire({ title: 'Usuario actualizado en SQL Server', icon: 'success' });
-        }
-      });
-    }
-  }
-
-  EliminarUsuario(us: Usuario) {
-    Swal.fire({
-      icon: 'question',
-      title: `¿Está seguro de eliminar el usuario ${us.nombre}?`,
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.usuarioService.eliminarUsuario(us.id).subscribe({
-          next: () => {
-            this.cargarUsuariosDesdeBD();
-            Swal.fire('Eliminado', 'El usuario ha sido desactivado en SQL Server', 'success');
-          }
-        });
-      }
-    });
-  }
-
-  cerrarModal(modal: ElementRef | undefined) {
-    if (modal) {
-      const bsmodal = Modal.getInstance(modal.nativeElement);
-      bsmodal?.hide();
-    }
-    const backdrop = document.querySelector('.modal-backdrop.fade.show');
-    if (backdrop) {
-      backdrop.parentNode?.removeChild(backdrop);
-    }
-    document.body.removeAttribute('style');
-    document.body.removeAttribute('class');
+  EliminarUsuario(user: Usuario): void {
+    if (!window.confirm(`¿Desactivar la cuenta de ${user.nombre}?`)) return;
+    this.usuarios.eliminarUsuario(user.id).subscribe({ next: () => { this.anuncio = 'Cuenta desactivada.'; this.cargarUsuariosDesdeBD(); },
+      error: error => this.error = mensajeError(error) });
   }
 }

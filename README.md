@@ -1,59 +1,54 @@
-# QueRopero
+# Que Ropero
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.6.
+Alquiler de lavadoras por horas a domicilio en Itagüí. Angular 20, Express y **Azure SQL / SQL Server**. Express sirve el sitio y la API desde el mismo origen; no se necesita Supabase.
 
-## Development server
+## Ejecutar
 
-To start a local development server, run:
+Requiere Node.js 24 y una base SQL Server o Azure SQL accesible.
 
-```bash
-ng serve
+```powershell
+npm ci
+Copy-Item .env.example .env
+# Completar las variables de conexión antes de continuar.
+npm run db:migrate
+npm run build
+# Para servir el compilado, usar APP_ORIGIN=http://localhost:3000.
+npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+En desarrollo, usar `APP_ORIGIN=http://localhost:4200` y ejecutar `npm run start:api` y `npm run start:frontend` en terminales distintas. El proxy dirige `/api` al puerto 3000. SQL Express debe tener TCP/IP y un puerto fijo habilitados; Node utiliza autenticación SQL, no la sesión integrada de Windows.
 
-## Code scaffolding
+## Ver el diseño sin base de datos
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```powershell
+npm run build
+npm run preview:demo
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Abrir <http://127.0.0.1:4300>. Este servidor de pruebas utiliza datos **ficticios en memoria** que se pierden al reiniciarlo. Cuenta: `cliente@example.com`, contraseña `Prueba-segura-2026`. No se utiliza en `npm start` ni en el despliegue.
 
-```bash
-ng generate --help
+## Verificar
+
+```powershell
+npm run format:check
+npm run check
+npm run test:api
+npm run build
+npm run test:ci
+npx playwright install chrome
+npm run test:e2e
+npm audit --omit=dev
 ```
 
-## Building
+La integración SQL se omite sin `SQL_TEST_SERVER`. En Windows, con `sqlcmd` y permisos para crear bases de prueba, establece `$env:SQL_TEST_SERVER='.\SQLEXPRESS'` antes de `npm run test:api`. Crea y elimina exclusivamente una base temporal `QueRoperoVerify_…`; no utiliza la base del negocio. Verifica concurrencia, transacciones, inventario, precios e idempotencia.
 
-To build the project run:
+## Operación
 
-```bash
-ng build
-```
+- [Despliegue en Azure](docs/azure.md).
+- [Correcciones y pendientes](docs/estado-proyecto.md).
+- [Procedencia de imágenes](docs/assets.md).
+- `database/`: estructura, procedimientos y permisos SQL.
+- `api/`: autenticación, autorización, validación y consultas parametrizadas.
+- `src/styles.css`: temas claro y oscuro.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Las reservas nuevas tienen pago en efectivo **pendiente**. Solo un operador o administrador puede registrar el cobro y confirmar la devolución física. No hay pasarela de pagos conectada.

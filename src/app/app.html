@@ -1,18 +1,4 @@
-<ng-container *ngIf="!isLoginRoute(); else loginContent">
-
-<div class="container-fluid p-0">
-
-<app-header></app-header>
-
-<router-outlet/>
-
-
-<app-footer></app-footer>
-
-</div>
-</ng-container>
-
-<ng-template #loginContent>
-    <router-outlet/>
-</ng-template>
-
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<app-header />
+<main id="contenido" tabindex="-1"><router-outlet /></main>
+<app-footer />

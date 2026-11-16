@@ -1,64 +1,7 @@
-<main class="catalogo-container">
-  <!-- Panel lateral con Filtros y Mapa de Cobertura en Itagüí -->
-  <aside class="filtro-lateral" style="width: 300px;">
-    <h2 style="color: #00d2ff;">Filtros de Equipos</h2>
-
-    <div class="busqueda">
-      <input type="text" [(ngModel)]="textoBusqueda" (input)="aplicarFiltros()" placeholder="Buscar por marca, kg o barrio..." />
-    </div>
-
-    <div class="filtro-seccion">
-      <h3 style="color: #00d2ff;">Tipo de Lavadora</h3>
-      <label><input type="radio" name="cat" value="Todas" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()" /> Todas</label>
-      <label><input type="radio" name="cat" value="Carga Superior" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()" /> Carga Superior</label>
-      <label><input type="radio" name="cat" value="Carga Frontal" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()" /> Carga Frontal</label>
-      <label><input type="radio" name="cat" value="Lavasecadora" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()" /> Lavasecadora</label>
-    </div>
-
-    <div class="filtro-seccion">
-      <h3 style="color: #00d2ff;">Disponibilidad</h3>
-      <label>
-        <input type="checkbox" [(ngModel)]="soloDisponibles" (change)="aplicarFiltros()" />
-        Solo equipos disponibles hoy
-      </label>
-    </div>
-
-    <button class="btn-aplicar" style="background: #00d2ff; color: #071e3d;" (click)="aplicarFiltros()">
-      Actualizar Búsqueda
-    </button>
-
-    <!-- Mapa de cobertura Itagüí (ya incluido en tus assets) -->
-    <div style="margin-top: 24px; text-align: center;">
-      <h3 style="color: #00d2ff; font-size: 1rem; margin-bottom: 8px;">📍 Cobertura en Itagüí</h3>
-      <img src="/assets/imagenes/mapa.jpg" alt="Mapa Cobertura Itagüí" style="width: 100%; border-radius: 10px; border: 2px solid #00d2ff;">
-      <small style="color: #bbb; display: block; margin-top: 6px;">
-        San José • La Gloria • San Pío X • Pilsen • Playas de María • San Isidro
-      </small>
-    </div>
-  </aside>
-
-  <!-- Catálogo de Lavadoras conectado a SQL Server -->
-  <section class="productos-camisetas">
-    <div class="producto" *ngFor="let lav of lavadorasFiltradas" style="width: 265px; display: flex; flex-direction: column; justify-content: space-between;">
-      <div>
-        <span [style.background]="lav.disponible ? '#1aaf5d' : '#e11d48'"
-              style="display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: bold; margin-bottom: 8px; color: #fff;">
-          {{ lav.estado }} ({{ lav.cantidad }} disp.)
-        </span>
-        <img [src]="lav.imagen" [alt]="lav.nombre" style="width: 100%; height: 190px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;" />
-        <h2 style="font-size: 1.05rem; color: #fff; margin: 6px 0;">{{ lav.nombre }}</h2>
-        <p style="color: #00d2ff; font-size: 0.85rem; margin: 4px 0;">{{ lav.caracteristicas }}</p>
-        <p style="color: #aaa; font-size: 0.8rem; margin: 2px 0;">📍 {{ lav.barrioUbicacion }}</p>
-        <p class="precio" style="color: #ffd700; font-size: 1.15rem; font-weight: bold; margin: 8px 0;">
-          ${{ lav.precio | number }} COP / hora
-        </p>
-      </div>
-
-      <button (click)="reservarLavadora(lav)"
-              [disabled]="!lav.disponible"
-              style="width: 100%; background: #0077ff; color: #fff; border: none; padding: 10px; border-radius: 20px; font-weight: bold; cursor: pointer;">
-        {{ lav.disponible ? ' Reservar Lavadora' : 'No Disponible' }}
-      </button>
-    </div>
-  </section>
-</main>
+<div class="page-shell catalog-page"><div class="page-heading"><h1>Encuentra tu lavadora.</h1><p>Elige el equipo, define las horas y solicita la entrega en Itagüí.</p></div>
+<div class="catalog-layout"><aside class="filters" aria-label="Filtros del catálogo"><label for="buscar">Buscar equipo</label><input id="buscar" type="search" [(ngModel)]="textoBusqueda" (input)="aplicarFiltros()" placeholder="Marca, capacidad o barrio">
+<label for="categoria">Tipo de lavadora</label><select id="categoria" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()"><option>Todas</option><option>Carga Superior</option><option>Carga Frontal</option><option>Lavasecadora</option></select>
+<label class="check-label"><input type="checkbox" [(ngModel)]="soloDisponibles" (change)="aplicarFiltros()"> Solo disponibles</label><button class="text-button" (click)="limpiarFiltros()">Limpiar filtros</button><div class="filter-note"><h2>Así de sencillo.</h2><p>Alquiler de 1 a 72 horas. Pago en efectivo al recibir tu equipo.</p><p>La disponibilidad y el precio se verifican al confirmar.</p></div></aside>
+<section class="catalog-results" aria-label="Lavadoras"><p role="status" class="notice" *ngIf="cargando">Estamos buscando tus lavadoras…</p><div class="notice error" *ngIf="error" role="alert"><p>{{ error }}</p><button class="button-secondary" (click)="cargarLavadoras()">Volver a intentar</button></div><div class="empty-state" *ngIf="!cargando && !error && !lavadorasFiltradas.length"><h2>No encontramos equipos.</h2><p>Prueba con otra búsqueda o vuelve más tarde.</p><button class="button-secondary" (click)="limpiarFiltros()">Ver todos</button></div>
+<ng-container *ngIf="!cargando && !error"><div class="results-bar"><span>{{ lavadorasFiltradas.length }} equipos</span><a routerLink="/compras">Ir a mi reserva <span aria-hidden="true">↗</span></a></div><div class="product-grid"><article class="product-card" *ngFor="let lav of lavadorasFiltradas"><div class="product-image"><img [src]="lav.imagen || '/assets/lavadora-placeholder.svg'" (error)="imagenError($event)" [alt]="lav.nombre" width="480" height="360" loading="lazy"><span class="status" [class.unavailable]="!lav.disponible">{{ lav.disponible ? 'Disponible' : 'No disponible' }}</span></div><div class="product-details"><p class="product-capacity">{{ lav.capacidadKg }} kg · {{ lav.categoria }}</p><h2>{{ lav.nombre }}</h2><p class="muted">{{ lav.modelo }}</p><p class="product-features">{{ lav.caracteristicas }}</p><div class="product-price"><strong>{{ lav.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</strong><span>/ hora</span></div><button class="button" (click)="reservarLavadora(lav)" [disabled]="!lav.disponible || agregado(lav.idLavadora)">{{ agregado(lav.idLavadora) ? 'Agregada a tu reserva' : 'Elegir lavadora' }}</button></div></article></div></ng-container>
+<p class="notice success" role="status" *ngIf="anuncio">{{ anuncio }} <a routerLink="/compras">Revisar reserva</a></p></section></div></div>

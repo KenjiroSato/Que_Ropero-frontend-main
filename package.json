@@ -3,10 +3,22 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node api/index.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:frontend": "ng serve",
+    "start:api": "node --watch api/index.js",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:api": "node --test api/tests/*.test.js",
+    "test:e2e": "playwright test",
+    "check": "tsc --noEmit -p tsconfig.app.json",
+    "format": "prettier --write src api scripts tests *.json *.md .github/workflows/*.yml",
+    "format:check": "prettier --check src api scripts tests *.json *.md .github/workflows/*.yml",
+    "db:migrate": "node scripts/migrate.js",
+    "admin:create": "node scripts/create-admin.js",
+    "preview:demo": "node tests/fixture-server.js",
+    "admin:reset-password": "node scripts/reset-password.js"
   },
   "prettier": {
     "printWidth": 100,
@@ -28,30 +40,25 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
-    "@popperjs/core": "^2.11.8",
-    "@supabase/supabase-js": "^2.118.0",
-    "@sweetalert2/ngx-sweetalert2": "^14.0.1",
-    "bcrypt": "^6.0.0",
+    "@fontsource-variable/manrope": "^5.3.0",
     "bcryptjs": "^3.0.3",
-    "bootstrap": "^5.3.8",
-    "cors": "^2.8.6",
-    "date": "^2.0.6",
-    "date-fns-tz": "^3.2.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
-    "jquery": "^3.7.1",
-    "mssql": "^12.7.6",
-    "popper.js": "^1.16.1",
+    "express-rate-limit": "^8.7.4",
+    "helmet": "^8.3.0",
+    "mssql": "^12.7.14",
     "rxjs": "~7.8.0",
-    "sweetalert2": "^11.26.3",
     "tslib": "^2.3.0",
+    "zod": "^4.6.7",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular/build": "^20.3.6",
     "@angular/cli": "^20.3.6",
     "@angular/compiler-cli": "^20.3.0",
-    "@types/bootstrap": "^5.2.10",
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
@@ -59,12 +66,17 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "prettier": "^3.10.1",
     "typescript": "~5.9.2"
   },
-  "description": "This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.6.",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
+  "description": "Alquiler de lavadoras a domicilio en Itagüí. Angular, Express y Azure SQL.",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "overrides": {
+    "glob@>=8": "^14.0.2",
+    "minimatch@>=4": "^11.0.1"
+  }
 }

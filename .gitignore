@@ -48,3 +48,12 @@ que-ropero-backend/node_modules/
 dist/
 .env
 que-ropero-backend/.env
+.env.*
+!.env.example
+/test-results/
+/playwright-report/
+/.impeccable/review/
+/.impeccable/reference/
+/.impeccable/mocks/
+/.impeccable/config.local.json
+/.impeccable/direction-seed.txt

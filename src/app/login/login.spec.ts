@@ -1,3 +1,7 @@
+import { CommonModule } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
@@ -8,9 +12,8 @@ describe('Login', () => {
   let fixture: ComponentFixture<Login>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [FormsModule],
-      declarations: [Login]
+    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      imports: [FormsModule, CommonModule], declarations: [Login]
     })
     .compileComponents();
 

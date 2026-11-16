@@ -1,3 +1,8 @@
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Carrito } from './carrito';
@@ -7,8 +12,8 @@ describe('Carrito', () => {
   let fixture: ComponentFixture<Carrito>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [Carrito]
+    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      imports: [FormsModule, CommonModule], declarations: [Carrito]
     })
     .compileComponents();
 

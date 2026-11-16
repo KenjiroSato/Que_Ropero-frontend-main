@@ -1,41 +1,13 @@
-<header class="header" style="background: linear-gradient(90deg, #071e3d, #0f3460, #16213e); border-bottom: 2px solid #00d2ff;">
-  <div class="header-container" style="flex-direction: row; justify-content: space-between; flex-wrap: wrap;">
-    <!-- Logo Que Ropero -->
-    <a routerLink="/" class="logo">
-      <span style="font-size: 2.2rem;"></span>
-      <div>
-        <span style="color: #00d2ff; font-weight: 800; display: block; line-height: 1.1;">QUE ROPERO</span>
-        <small style="color: #cbd5e1; font-size: 0.75rem;">Alquiler de Lavadoras • Itagüí</small>
-      </div>
-    </a>
-
-    <!-- Navegación -->
-    <nav class="nav" style="gap: 28px;">
-      <a routerLink="/"> Inicio</a>
-      <a routerLink="/productos">Catálogo de Lavadoras</a>
-      <a routerLink="/compras"> Mis Alquileres / Carrito</a>
-
-      <!-- SOLO VISIBLE PARA EL ROL ADMINISTRADOR -->
-      <a *ngIf="esAdmin" routerLink="/usuarios" style="color: #ffd700; font-weight: bold;">
-         Usuarios (BD)
-      </a>
-
-      <a *ngIf="!usuarioActual" routerLink="/login" style="background: #00d2ff; color: #071e3d; padding: 6px 16px; border-radius: 20px; font-weight: bold;">
-        Iniciar Sesión
-      </a>
-
-      <div *ngIf="usuarioActual" style="display: flex; align-items: center; gap: 10px;">
-        <span style="color: #00d2ff; font-size: 0.95rem;">
-           {{ usuarioActual.nombre }}
-        </span>
-        <span [style.background]="esAdmin ? '#f59e0b' : '#1aaf5d'"
-              style="color: #000; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">
-          {{ usuarioActual.tipoUsuario || 'Cliente' }}
-        </span>
-        <button (click)="salir()" style="background: #e11d48; color: #fff; border: none; padding: 5px 12px; border-radius: 15px; cursor: pointer; font-size: 0.85rem;">
-          Cerrar Sesión
-        </button>
-      </div>
-    </nav>
-  </div>
+<header class="site-header">
+  <a routerLink="/" class="brand" aria-label="Que Ropero, inicio"><svg viewBox="0 0 32 36" aria-hidden="true"><rect x="2" y="2" width="28" height="32" rx="5"/><path d="M2 10h28"/><circle cx="16" cy="22" r="8"/><path d="M10 22c4-5 8 5 12 0M7 6h1m4 0h1"/></svg><span>que ropero<span class="brand-dot">.</span></span></a>
+  <button type="button" class="theme-toggle" (click)="theme.toggle()" [attr.aria-label]="theme.dark() ? 'Activar modo claro' : 'Activar modo oscuro'" [attr.aria-pressed]="theme.dark()"><svg *ngIf="theme.dark()" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg><svg *ngIf="!theme.dark()" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14a8 8 0 0 1-10-10 8 8 0 1 0 10 10Z"/></svg><span>{{ theme.dark() ? 'Modo claro' : 'Modo oscuro' }}</span></button>
+  <button class="menu-toggle button-secondary" type="button" (click)="menuAbierto = !menuAbierto" [attr.aria-expanded]="menuAbierto" aria-controls="navegacion">{{ menuAbierto ? 'Cerrar menú' : 'Menú' }}</button>
+  <nav id="navegacion" aria-label="Navegación principal" [class.open]="menuAbierto" (click)="menuAbierto = false">
+    <a routerLink="/productos" routerLinkActive="active">Lavadoras</a>
+    <a routerLink="/compras" routerLinkActive="active">Mi reserva <span class="cart-count" *ngIf="carrito.items().length">{{ carrito.items().length }}</span></a>
+    <a *ngIf="usuarios.esAdmin()" routerLink="/usuarios" routerLinkActive="active">Usuarios</a>
+    <a *ngIf="!usuarios.sesion()" routerLink="/login" class="button button-small">Iniciar sesión <span aria-hidden="true">↗</span></a>
+    <ng-container *ngIf="usuarios.sesion() as usuario"><span class="account-name">{{ usuario.nombre }}</span><button type="button" class="text-button" (click)="salir()">Salir</button></ng-container>
+  </nav>
 </header>
+<p *ngIf="error" class="notice error" role="alert">{{ error }}</p>
