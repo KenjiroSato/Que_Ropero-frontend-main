@@ -13,18 +13,10 @@ import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
-      imports: [
-        CommonModule, FormsModule,
-        RouterModule.forRoot([])
-      ],
-      declarations: [
-        App,
-        Header,
-        Footer,
-        Home,
-        Login
-      ],
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      imports: [CommonModule, FormsModule, RouterModule.forRoot([])],
+      declarations: [App, Header, Footer, Home, Login],
     }).compileComponents();
   });
 

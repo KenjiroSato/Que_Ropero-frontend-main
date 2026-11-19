@@ -7,12 +7,17 @@ const { connectDatabase } = require('../api/database');
   const email = process.env.RESET_EMAIL?.trim().toLowerCase();
   const password = process.env.RESET_PASSWORD;
   if (!email || !password || password.length < 12 || Buffer.byteLength(password, 'utf8') > 72) {
-    throw new Error('Configura RESET_EMAIL y RESET_PASSWORD (12 caracteres mínimo, 72 bytes máximo).');
+    throw new Error(
+      'Configura RESET_EMAIL y RESET_PASSWORD (12 caracteres mínimo, 72 bytes máximo).',
+    );
   }
   const hash = await bcrypt.hash(password, 12);
   const pool = await connectDatabase();
   try {
-    await pool.request().input('email', sql.NVarChar(100), email).input('hash', sql.NVarChar(255), hash).query(`
+    await pool
+      .request()
+      .input('email', sql.NVarChar(100), email)
+      .input('hash', sql.NVarChar(255), hash).query(`
       SET XACT_ABORT ON;
       BEGIN TRANSACTION;
       DECLARE @id int;
@@ -25,7 +30,7 @@ const { connectDatabase } = require('../api/database');
   } finally {
     await pool.close();
   }
-})().catch(error => {
+})().catch((error) => {
   console.error('No se pudo restablecer la contraseña:', error.message);
   process.exitCode = 1;
 });

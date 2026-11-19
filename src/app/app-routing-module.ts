@@ -8,12 +8,25 @@ export const adminGuard: CanActivateFn = () => {
   return service.esAdmin() ? true : inject(Router).createUrlTree(['/login']);
 };
 const routes: Routes = [
-  { path: 'usuarios', canActivate: [adminGuard], loadChildren: () => import('./usuario/usuario-module').then(m => m.UsuarioModule) },
+  {
+    path: 'usuarios',
+    canActivate: [adminGuard],
+    loadChildren: () => import('./usuario/usuario-module').then((m) => m.UsuarioModule),
+  },
   { path: 'login', component: Login },
-  { path: 'productos', loadChildren: () => import('./productos/productos-module').then(m => m.ProductosModule) },
-  { path: 'compras', loadChildren: () => import('./compras/compras-module').then(m => m.ComprasModule) },
+  {
+    path: 'productos',
+    loadChildren: () => import('./productos/productos-module').then((m) => m.ProductosModule),
+  },
+  {
+    path: 'compras',
+    loadChildren: () => import('./compras/compras-module').then((m) => m.ComprasModule),
+  },
   { path: '', component: Home, pathMatch: 'full' },
   { path: '**', component: Home, data: { notFound: true } },
 ];
-@NgModule({ imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' })], exports: [RouterModule] })
+@NgModule({
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled' })],
+  exports: [RouterModule],
+})
 export class AppRoutingModule {}

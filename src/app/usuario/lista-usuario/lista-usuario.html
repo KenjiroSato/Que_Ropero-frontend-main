@@ -1,1 +1,76 @@
-<div class="page-shell"><div class="section-heading"><div><h1>Gestión de usuarios</h1><p>Administra cuentas y permisos de acceso.</p></div><button class="button" (click)="NuevoUsuario()">Crear usuario</button></div><p class="notice error" *ngIf="error" role="alert">{{ error }}</p><p class="notice success" *ngIf="anuncio" role="status">{{ anuncio }}</p><p *ngIf="cargando" role="status">Cargando usuarios…</p><section class="editor-panel" *ngIf="usuarioSeleccionado"><h2>{{ isnew ? 'Nuevo usuario' : 'Editar usuario' }}</h2><app-cu-usuario [usuario]="usuarioSeleccionado"/><div *ngIf="isnew"><label for="nueva-clave">Contraseña inicial individual</label><input id="nueva-clave" type="password" [(ngModel)]="password" minlength="12" maxlength="72" autocomplete="new-password"><p>Al menos 12 caracteres. Acuerda una contraseña individual con el titular; nunca uses una clave compartida.</p></div><div class="button-row"><button class="button" (click)="guardarUsuario()" [disabled]="guardando">{{ guardando ? 'Guardando…' : 'Guardar usuario' }}</button><button class="button-secondary" (click)="usuarioSeleccionado = null" [disabled]="guardando">Cancelar</button></div></section><div class="table-scroll"><table><caption>Usuarios activos (hasta 200 registros recientes)</caption><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Registro</th><th>Acciones</th></tr></thead><tbody><tr *ngFor="let user of vectorUsuarios"><td>{{ user.nombre }}</td><td>{{ user.correo }}</td><td>{{ user.tipoUsuario }}</td><td>{{ user.fechaRegistro | date:'dd/MM/yyyy' }}</td><td><button class="text-button" (click)="editarUsuario(user)">Editar</button><button class="text-button danger" (click)="EliminarUsuario(user)">Desactivar</button></td></tr></tbody></table></div><button class="button-secondary" *ngIf="error && !usuarioSeleccionado" (click)="cargarUsuariosDesdeBD()">Reintentar</button></div>
+<div class="page-shell">
+  <div class="section-heading">
+    <div>
+      <h1>Gestión de usuarios</h1>
+      <p>Administra cuentas y permisos de acceso.</p>
+    </div>
+    <button class="button" (click)="NuevoUsuario()">Crear usuario</button>
+  </div>
+  <p class="notice error" *ngIf="error" role="alert">{{ error }}</p>
+  <p class="notice success" *ngIf="anuncio" role="status">{{ anuncio }}</p>
+  <p *ngIf="cargando" role="status">Cargando usuarios…</p>
+  <section class="editor-panel" *ngIf="usuarioSeleccionado">
+    <h2>{{ isnew ? 'Nuevo usuario' : 'Editar usuario' }}</h2>
+    <app-cu-usuario [usuario]="usuarioSeleccionado" />
+    <div *ngIf="isnew">
+      <label for="nueva-clave">Contraseña inicial individual</label
+      ><input
+        id="nueva-clave"
+        type="password"
+        [(ngModel)]="password"
+        minlength="12"
+        maxlength="72"
+        autocomplete="new-password"
+      />
+      <p>
+        Al menos 12 caracteres. Acuerda una contraseña individual con el titular; nunca uses una
+        clave compartida.
+      </p>
+    </div>
+    <div class="button-row">
+      <button class="button" (click)="guardarUsuario()" [disabled]="guardando">
+        {{ guardando ? 'Guardando…' : 'Guardar usuario' }}</button><button
+        class="button-secondary"
+        (click)="usuarioSeleccionado = null"
+        [disabled]="guardando"
+      >
+        Cancelar
+      </button>
+    </div>
+  </section>
+  <div class="table-scroll">
+    <table>
+      <caption>
+        Usuarios activos (hasta 200 registros recientes)
+      </caption>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Registro</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of vectorUsuarios">
+          <td>{{ user.nombre }}</td>
+          <td>{{ user.correo }}</td>
+          <td>{{ user.tipoUsuario }}</td>
+          <td>{{ user.fechaRegistro | date: 'dd/MM/yyyy' }}</td>
+          <td>
+            <button class="text-button" (click)="editarUsuario(user)">Editar</button
+            ><button class="text-button danger" (click)="EliminarUsuario(user)">Desactivar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <button
+    class="button-secondary"
+    *ngIf="error && !usuarioSeleccionado"
+    (click)="cargarUsuariosDesdeBD()"
+  >
+    Reintentar
+  </button>
+</div>

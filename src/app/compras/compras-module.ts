@@ -7,18 +7,12 @@ import { RouterModule, Routes } from '@angular/router';
 const router: Routes = [
   {
     path: '',
-    component: Carrito
-  }
+    component: Carrito,
+  },
 ];
 
 @NgModule({
-  declarations: [
-    Carrito
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule.forChild(router)
-  ]
+  declarations: [Carrito],
+  imports: [CommonModule, FormsModule, RouterModule.forChild(router)],
 })
-export class ComprasModule { }
+export class ComprasModule {}

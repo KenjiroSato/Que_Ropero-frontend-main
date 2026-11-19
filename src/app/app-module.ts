@@ -1,4 +1,10 @@
-import { NgModule, provideAppInitializer, inject, provideBrowserGlobalErrorListeners, LOCALE_ID } from '@angular/core';
+import {
+  NgModule,
+  provideAppInitializer,
+  inject,
+  provideBrowserGlobalErrorListeners,
+  LOCALE_ID,
+} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es-CO';
@@ -17,9 +23,12 @@ registerLocaleData(localeEs);
 @NgModule({
   declarations: [App, Header, Footer, Home, Login],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
-  providers: [provideBrowserGlobalErrorListeners(), provideHttpClient(withInterceptors([apiInterceptor])),
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideHttpClient(withInterceptors([apiInterceptor])),
     { provide: LOCALE_ID, useValue: 'es-CO' },
-    provideAppInitializer(() => firstValueFrom(inject(UsuarioService).restaurarSesion()))],
+    provideAppInitializer(() => firstValueFrom(inject(UsuarioService).restaurarSesion())),
+  ],
   bootstrap: [App],
 })
 export class AppModule {}

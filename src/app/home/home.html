@@ -1,4 +1,127 @@
-<section *ngIf="notFound" class="page-shell empty-state"><h1>Esta página no está aquí.</h1><p>Pero tu próxima lavadora sí puede estarlo.</p><a class="button" routerLink="/productos">Explorar lavadoras</a></section>
-<ng-container *ngIf="!notFound"><section class="home-opening"><div class="home-hero"><div class="home-copy"><h1>Menos vueltas.<br>Más tiempo<br><em>para ti.</em></h1><p>Tu lavadora por horas, a domicilio en Itagüí.<br>Elige tu equipo y deja que tu día siga.</p><a class="text-link" routerLink="/productos">Explora las lavadoras <span aria-hidden="true">↗</span></a></div><figure class="home-photo"><img src="/images/lavanderia.jpg" alt="Lavadora en un espacio doméstico luminoso con ropa y plantas" width="1600" height="1067" fetchpriority="high"><figcaption><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M4 7h16M7 4.5h2"/><circle cx="12" cy="14" r="4"/></svg><span>En tu casa. A tu ritmo.<small>Alquiler por horas en Itagüí</small></span></figcaption></figure></div><form class="home-search" (ngSubmit)="buscar()"><label for="home-search">Tu próxima lavadora<br><span>Empieza por encontrarla.</span></label><div class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="home-search" name="busqueda" [(ngModel)]="busqueda" placeholder="Busca por marca o capacidad" type="search"></div><button class="button" type="submit">Encontrar lavadora <span aria-hidden="true">↗</span></button></form></section>
-<section class="how-section"><div><h2>Una tarea menos.<br>Así de sencillo.</h2><p>Desde elegir tu equipo hasta solicitar su recolección, todo en un mismo lugar.</p><a class="text-link" routerLink="/productos">Encuentra tu lavadora <span aria-hidden="true">↗</span></a></div><ol class="how-steps"><li><span>1</span><div><h3>Elige tu lavadora</h3><p>Consulta capacidad, tarifa por hora y disponibilidad.</p></div></li><li><span>2</span><div><h3>Prepara tu reserva</h3><p>Define de 1 a 72 horas e indica tu dirección en Itagüí.</p></div></li><li><span>3</span><div><h3>Gestiona tu alquiler</h3><p>Paga en efectivo contra entrega y solicita la recolección desde tu cuenta.</p></div></li></ol></section>
-<section class="faq-section"><h2>Antes de empezar.</h2><div><details><summary>¿Cómo se calcula el alquiler?</summary><p>La tarifa por hora de cada equipo se multiplica por las horas que selecciones. Verás el total estimado en tu reserva; el servidor verifica la tarifa al confirmar.</p></details><details><summary>¿Dónde puedo recibir la lavadora?</summary><p>El servicio está dirigido a Itagüí, Antioquia. Indica calle, número, barrio y apartamento para coordinar la entrega.</p></details><details><summary>¿Tengo que pagar por internet?</summary><p>No. Por ahora el pago es en efectivo contra entrega. Crear una reserva no significa que ya hayas pagado.</p></details><details><summary>¿Cómo solicito que recojan el equipo?</summary><p>Entra a Mi reserva y selecciona Solicitar recolección en tu alquiler activo. El equipo vuelve a estar disponible cuando el operador confirma que lo recogió.</p></details></div></section><section class="home-close"><h2>Dale espacio<br>a tu día.</h2><a routerLink="/productos" class="button button-light">Elegir mi lavadora <span aria-hidden="true">↗</span></a></section></ng-container>
+<section *ngIf="notFound" class="page-shell empty-state">
+  <h1>Esta página no está aquí.</h1>
+  <p>Pero tu próxima lavadora sí puede estarlo.</p>
+  <a class="button" routerLink="/productos">Explorar lavadoras</a>
+</section>
+<ng-container *ngIf="!notFound"
+  ><section class="home-opening">
+    <div class="home-hero">
+      <div class="home-copy">
+        <h1>Menos vueltas.<br />Más tiempo<br /><em>para ti.</em></h1>
+        <p>
+          Tu lavadora por horas, a domicilio en Itagüí.<br />Elige tu equipo y deja que tu día siga.
+        </p>
+        <a class="text-link" routerLink="/productos"
+          >Explora las lavadoras <span aria-hidden="true">↗</span></a
+        >
+      </div>
+      <figure class="home-photo">
+        <img
+          src="/images/lavanderia.jpg"
+          alt="Lavadora en un espacio doméstico luminoso con ropa y plantas"
+          width="1600"
+          height="1067"
+          fetchpriority="high"
+        />
+        <figcaption>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="2" width="16" height="20" rx="3" />
+            <path d="M4 7h16M7 4.5h2" />
+            <circle cx="12" cy="14" r="4" /></svg
+          ><span>En tu casa. A tu ritmo.<small>Alquiler por horas en Itagüí</small></span>
+        </figcaption>
+      </figure>
+    </div>
+    <form class="home-search" (ngSubmit)="buscar()">
+      <label for="home-search"
+        >Tu próxima lavadora<br /><span>Empieza por encontrarla.</span></label
+      >
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10" cy="10" r="6" />
+          <path d="m15 15 6 6" /></svg
+        ><input
+          id="home-search"
+          name="busqueda"
+          [(ngModel)]="busqueda"
+          placeholder="Busca por marca o capacidad"
+          type="search"
+        />
+      </div>
+      <button class="button" type="submit">
+        Encontrar lavadora <span aria-hidden="true">↗</span>
+      </button>
+    </form>
+  </section>
+  <section class="how-section">
+    <div>
+      <h2>Una tarea menos.<br />Así de sencillo.</h2>
+      <p>Desde elegir tu equipo hasta solicitar su recolección, todo en un mismo lugar.</p>
+      <a class="text-link" routerLink="/productos"
+        >Encuentra tu lavadora <span aria-hidden="true">↗</span></a
+      >
+    </div>
+    <ol class="how-steps">
+      <li>
+        <span>1</span>
+        <div>
+          <h3>Elige tu lavadora</h3>
+          <p>Consulta capacidad, tarifa por hora y disponibilidad.</p>
+        </div>
+      </li>
+      <li>
+        <span>2</span>
+        <div>
+          <h3>Prepara tu reserva</h3>
+          <p>Define de 1 a 72 horas e indica tu dirección en Itagüí.</p>
+        </div>
+      </li>
+      <li>
+        <span>3</span>
+        <div>
+          <h3>Gestiona tu alquiler</h3>
+          <p>Paga en efectivo contra entrega y solicita la recolección desde tu cuenta.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+  <section class="faq-section">
+    <h2>Antes de empezar.</h2>
+    <div>
+      <details>
+        <summary>¿Cómo se calcula el alquiler?</summary>
+        <p>
+          La tarifa por hora de cada equipo se multiplica por las horas que selecciones. Verás el
+          total estimado en tu reserva; el servidor verifica la tarifa al confirmar.
+        </p>
+      </details>
+      <details>
+        <summary>¿Dónde puedo recibir la lavadora?</summary>
+        <p>
+          El servicio está dirigido a Itagüí, Antioquia. Indica calle, número, barrio y apartamento
+          para coordinar la entrega.
+        </p>
+      </details>
+      <details>
+        <summary>¿Tengo que pagar por internet?</summary>
+        <p>
+          No. Por ahora el pago es en efectivo contra entrega. Crear una reserva no significa que ya
+          hayas pagado.
+        </p>
+      </details>
+      <details>
+        <summary>¿Cómo solicito que recojan el equipo?</summary>
+        <p>
+          Entra a Mi reserva y selecciona Solicitar recolección en tu alquiler activo. El equipo
+          vuelve a estar disponible cuando el operador confirma que lo recogió.
+        </p>
+      </details>
+    </div>
+  </section>
+  <section class="home-close">
+    <h2>Dale espacio<br />a tu día.</h2>
+    <a routerLink="/productos" class="button button-light"
+      >Elegir mi lavadora <span aria-hidden="true">↗</span></a
+    >
+  </section></ng-container
+>

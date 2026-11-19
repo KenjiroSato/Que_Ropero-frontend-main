@@ -13,11 +13,11 @@ describe('ListaUsuario', () => {
   let fixture: ComponentFixture<ListaUsuario>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
       imports: [CommonModule, FormsModule],
-      declarations: [ListaUsuario, CuUsuario]
-    })
-    .compileComponents();
+      declarations: [ListaUsuario, CuUsuario],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListaUsuario);
     component = fixture.componentInstance;

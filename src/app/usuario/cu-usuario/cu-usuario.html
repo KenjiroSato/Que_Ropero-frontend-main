@@ -1,1 +1,38 @@
-<div class="form-grid" *ngIf="usuario"><div><label for="editar-nombre">Nombre completo</label><input id="editar-nombre" [(ngModel)]="usuario.nombre" required minlength="2" maxlength="120"></div><div><label for="editar-correo">Correo</label><input id="editar-correo" type="email" [(ngModel)]="usuario.correo" required maxlength="100"></div><div><label for="editar-celular">Celular</label><input id="editar-celular" type="tel" [(ngModel)]="usuario.celular" required></div><div><label for="editar-direccion">Dirección</label><input id="editar-direccion" [(ngModel)]="usuario.direccion" required minlength="8" maxlength="200"></div><div><label for="editar-rol">Rol</label><select id="editar-rol" [(ngModel)]="usuario.tipoUsuario"><option>Cliente</option><option>Administrador</option><option value="Operador Logistico">Operador logístico</option></select></div></div>
+<div class="form-grid" *ngIf="usuario">
+  <div>
+    <label for="editar-nombre">Nombre completo</label
+    ><input
+      id="editar-nombre"
+      [(ngModel)]="usuario.nombre"
+      required
+      minlength="2"
+      maxlength="120"
+    />
+  </div>
+  <div>
+    <label for="editar-correo">Correo</label
+    ><input id="editar-correo" type="email" [(ngModel)]="usuario.correo" required maxlength="100" />
+  </div>
+  <div>
+    <label for="editar-celular">Celular</label
+    ><input id="editar-celular" type="tel" [(ngModel)]="usuario.celular" required />
+  </div>
+  <div>
+    <label for="editar-direccion">Dirección</label
+    ><input
+      id="editar-direccion"
+      [(ngModel)]="usuario.direccion"
+      required
+      minlength="8"
+      maxlength="200"
+    />
+  </div>
+  <div>
+    <label for="editar-rol">Rol</label
+    ><select id="editar-rol" [(ngModel)]="usuario.tipoUsuario">
+      <option>Cliente</option>
+      <option>Administrador</option>
+      <option value="Operador Logistico">Operador logístico</option>
+    </select>
+  </div>
+</div>

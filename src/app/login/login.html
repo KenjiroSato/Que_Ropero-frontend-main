@@ -1,3 +1,130 @@
-<div class="auth-layout"><section class="auth-story"><h1>Menos pendientes.<br>Más tiempo para ti.</h1><p>Tu lavadora por horas, a domicilio en Itagüí.</p><a routerLink="/productos">Conoce las lavadoras <span aria-hidden="true">↗</span></a></section><section class="auth-panel"><h2>{{ modoRegistro ? 'Hagamos tu día más fácil.' : 'Qué bueno verte.' }}</h2><p>{{ modoRegistro ? 'Crea tu cuenta para reservar y consultar tus alquileres.' : 'Ingresa a tu cuenta y continúa con tu reserva.' }}</p><p class="notice error" *ngIf="error" role="alert">{{ error }}</p>
-<form *ngIf="!modoRegistro" #loginForm="ngForm" (ngSubmit)="login()"><label for="correo-login">Correo electrónico</label><input id="correo-login" name="correo" type="text" autocomplete="username" required maxlength="100" [(ngModel)]="usr"><label for="clave-login">Contraseña</label><input id="clave-login" name="clave" type="password" autocomplete="current-password" required [(ngModel)]="pwd"><button class="button" type="submit" [disabled]="loginForm.invalid || cargando">{{ cargando ? 'Ingresando…' : 'Iniciar sesión' }}</button><p>¿Primera vez aquí? <button class="text-button" type="button" (click)="cambiarModo(true)">Crear una cuenta</button></p></form>
-<form *ngIf="modoRegistro" #registro="ngForm" (ngSubmit)="registrar()"><label for="nombre">Nombre completo</label><input id="nombre" name="nombre" autocomplete="name" required minlength="2" maxlength="120" [(ngModel)]="nuevoUsuario.nombre"><label for="correo-registro">Correo electrónico</label><input id="correo-registro" name="correo" type="email" email autocomplete="email" required maxlength="100" [(ngModel)]="nuevoUsuario.correo"><div class="form-grid"><div><label for="celular">Celular</label><input id="celular" name="celular" type="tel" autocomplete="tel" required pattern="[+0-9 ()-]{7,20}" [(ngModel)]="nuevoUsuario.celular"></div><div><label for="documento">Documento (opcional)</label><input id="documento" name="documento" maxlength="30" [(ngModel)]="nuevoUsuario.documento"></div></div><label for="direccion-registro">Dirección en Itagüí</label><input id="direccion-registro" name="direccion" autocomplete="street-address" required minlength="8" maxlength="200" [(ngModel)]="nuevoUsuario.direccion"><label for="clave-registro">Contraseña</label><input id="clave-registro" name="password" type="password" autocomplete="new-password" required minlength="12" maxlength="72" aria-describedby="ayuda-clave" [(ngModel)]="nuevoUsuario.password"><small id="ayuda-clave">Usa al menos 12 caracteres. Una frase larga es más fácil de recordar.</small><label for="confirmar">Repetir contraseña</label><input id="confirmar" name="confirmar" type="password" autocomplete="new-password" required [(ngModel)]="confirmarPassword"><button type="submit" class="button" [disabled]="registro.invalid || cargando">{{ cargando ? 'Creando cuenta…' : 'Crear mi cuenta' }}</button><p>¿Ya tienes cuenta? <button class="text-button" type="button" (click)="cambiarModo(false)">Inicia sesión</button></p></form></section></div>
+<div class="auth-layout">
+  <section class="auth-story">
+    <h1>Menos pendientes.<br />Más tiempo para ti.</h1>
+    <p>Tu lavadora por horas, a domicilio en Itagüí.</p>
+    <a routerLink="/productos">Conoce las lavadoras <span aria-hidden="true">↗</span></a>
+  </section>
+  <section class="auth-panel">
+    <h2>{{ modoRegistro ? 'Hagamos tu día más fácil.' : 'Qué bueno verte.' }}</h2>
+    <p>
+      {{
+        modoRegistro
+          ? 'Crea tu cuenta para reservar y consultar tus alquileres.'
+          : 'Ingresa a tu cuenta y continúa con tu reserva.'
+      }}
+    </p>
+    <p class="notice error" *ngIf="error" role="alert">{{ error }}</p>
+    <form *ngIf="!modoRegistro" #loginForm="ngForm" (ngSubmit)="login()">
+      <label for="correo-login">Correo electrónico</label
+      ><input
+        id="correo-login"
+        name="correo"
+        type="text"
+        autocomplete="username"
+        required
+        maxlength="100"
+        [(ngModel)]="usr"
+      /><label for="clave-login">Contraseña</label
+      ><input
+        id="clave-login"
+        name="clave"
+        type="password"
+        autocomplete="current-password"
+        required
+        [(ngModel)]="pwd"
+      /><button class="button" type="submit" [disabled]="loginForm.invalid || cargando">
+        {{ cargando ? 'Ingresando…' : 'Iniciar sesión' }}
+      </button>
+      <p>
+        ¿Primera vez aquí?
+        <button class="text-button" type="button" (click)="cambiarModo(true)">
+          Crear una cuenta
+        </button>
+      </p>
+    </form>
+    <form *ngIf="modoRegistro" #registro="ngForm" (ngSubmit)="registrar()">
+      <label for="nombre">Nombre completo</label
+      ><input
+        id="nombre"
+        name="nombre"
+        autocomplete="name"
+        required
+        minlength="2"
+        maxlength="120"
+        [(ngModel)]="nuevoUsuario.nombre"
+      /><label for="correo-registro">Correo electrónico</label
+      ><input
+        id="correo-registro"
+        name="correo"
+        type="email"
+        email
+        autocomplete="email"
+        required
+        maxlength="100"
+        [(ngModel)]="nuevoUsuario.correo"
+      />
+      <div class="form-grid">
+        <div>
+          <label for="celular">Celular</label
+          ><input
+            id="celular"
+            name="celular"
+            type="tel"
+            autocomplete="tel"
+            required
+            pattern="[+0-9 ()-]{7,20}"
+            [(ngModel)]="nuevoUsuario.celular"
+          />
+        </div>
+        <div>
+          <label for="documento">Documento (opcional)</label
+          ><input
+            id="documento"
+            name="documento"
+            maxlength="30"
+            [(ngModel)]="nuevoUsuario.documento"
+          />
+        </div>
+      </div>
+      <label for="direccion-registro">Dirección en Itagüí</label
+      ><input
+        id="direccion-registro"
+        name="direccion"
+        autocomplete="street-address"
+        required
+        minlength="8"
+        maxlength="200"
+        [(ngModel)]="nuevoUsuario.direccion"
+      /><label for="clave-registro">Contraseña</label
+      ><input
+        id="clave-registro"
+        name="password"
+        type="password"
+        autocomplete="new-password"
+        required
+        minlength="12"
+        maxlength="72"
+        aria-describedby="ayuda-clave"
+        [(ngModel)]="nuevoUsuario.password"
+      /><small id="ayuda-clave"
+        >Usa al menos 12 caracteres. Una frase larga es más fácil de recordar.</small
+      ><label for="confirmar">Repetir contraseña</label
+      ><input
+        id="confirmar"
+        name="confirmar"
+        type="password"
+        autocomplete="new-password"
+        required
+        [(ngModel)]="confirmarPassword"
+      /><button type="submit" class="button" [disabled]="registro.invalid || cargando">
+        {{ cargando ? 'Creando cuenta…' : 'Crear mi cuenta' }}
+      </button>
+      <p>
+        ¿Ya tienes cuenta?
+        <button class="text-button" type="button" (click)="cambiarModo(false)">
+          Inicia sesión
+        </button>
+      </p>
+    </form>
+  </section>
+</div>

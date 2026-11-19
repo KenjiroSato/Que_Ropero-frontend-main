@@ -13,11 +13,11 @@ describe('Footer', () => {
   let fixture: ComponentFixture<Footer>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
       imports: [CommonModule, FormsModule, RouterModule],
-      declarations: [Footer]
-    })
-    .compileComponents();
+      declarations: [Footer],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Footer);
     component = fixture.componentInstance;

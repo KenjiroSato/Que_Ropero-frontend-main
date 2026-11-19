@@ -13,11 +13,11 @@ describe('Header', () => {
   let fixture: ComponentFixture<Header>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
       imports: [CommonModule, FormsModule, RouterModule],
-      declarations: [Header]
-    })
-    .compileComponents();
+      declarations: [Header],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Header);
     component = fixture.componentInstance;

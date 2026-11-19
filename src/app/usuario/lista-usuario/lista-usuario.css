@@ -1,1 +1,6 @@
-:host{display:block}.page-shell h1{font-size:46px}
+:host {
+  display: block;
+}
+.page-shell h1 {
+  font-size: 46px;
+}

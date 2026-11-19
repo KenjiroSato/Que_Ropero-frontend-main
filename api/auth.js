@@ -1,7 +1,7 @@
 const { randomBytes, createHash } = require('node:crypto');
 const { httpError } = require('./errors');
 const { publicUser } = require('./repository');
-const hashToken = token => createHash('sha256').update(token).digest('hex');
+const hashToken = (token) => createHash('sha256').update(token).digest('hex');
 function createAuth(repository, production) {
   const cookieOptions = { httpOnly: true, secure: production, sameSite: 'strict', path: '/' };
   async function issueSession(userId, req, res) {
@@ -13,21 +13,25 @@ function createAuth(repository, production) {
   }
   async function requireUser(req, res, next) {
     const token = req.cookies.qr_session;
-    if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token)) throw httpError(401, 'Inicia sesión para continuar.');
+    if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token))
+      throw httpError(401, 'Inicia sesión para continuar.');
     const user = await repository.sessionUser(hashToken(token));
     if (!user) throw httpError(401, 'Tu sesión expiró. Vuelve a iniciar sesión.');
-    req.user = publicUser(user); next();
+    req.user = publicUser(user);
+    next();
   }
   function roles(...allowed) {
     return (req, res, next) => {
-      if (!allowed.includes(req.user.tipoUsuario)) throw httpError(403, 'No tienes permiso para esta operación.');
+      if (!allowed.includes(req.user.tipoUsuario))
+        throw httpError(403, 'No tienes permiso para esta operación.');
       next();
     };
   }
   async function logout(req, res) {
     const token = req.cookies.qr_session;
     if (token) await repository.deleteSession(hashToken(token));
-    res.clearCookie('qr_session', cookieOptions); res.json({ mensaje: 'Sesión cerrada.' });
+    res.clearCookie('qr_session', cookieOptions);
+    res.json({ mensaje: 'Sesión cerrada.' });
   }
   return { issueSession, requireUser, roles, logout };
 }

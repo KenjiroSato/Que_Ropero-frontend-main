@@ -1,5 +1,150 @@
-<div class="page-shell"><div class="page-heading"><h1>Tu próxima lavada,<br>más cerca.</h1><p>Revisa tu selección y cuéntanos dónde entregar.</p></div><p class="notice success" *ngIf="anuncio" role="status">{{ anuncio }}</p><p class="notice error" *ngIf="error" role="alert">{{ error }}</p><p class="notice" *ngIf="carrito.storageError()" role="status">{{ carrito.storageError() }}</p>
-<div class="empty-state" *ngIf="!carrito.items().length"><h2>Tu reserva empieza aquí.</h2><p>Elige una lavadora para comenzar.</p><a routerLink="/productos" class="button">Explorar lavadoras</a></div>
-<div class="checkout-layout" *ngIf="carrito.items().length"><section aria-label="Equipos elegidos"><article class="cart-item" *ngFor="let item of carrito.items()"><img [src]="item.imagen || '/assets/lavadora-placeholder.svg'" [alt]="item.nombre" width="160" height="140"><div><h2>{{ item.nombre }}</h2><p>{{ item.precio | currency:'COP':'symbol-narrow':'1.0-0' }} / hora</p><label [for]="'horas-' + item.idLavadora">Horas de alquiler</label><input [id]="'horas-' + item.idLavadora" type="number" min="1" max="72" step="1" [ngModel]="item.horasAlquiler" (ngModelChange)="cambiarHoras(item.idLavadora, $event)" [disabled]="procesando"><strong>{{ item.precio * item.horasAlquiler | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></div><button class="text-button" [disabled]="procesando" (click)="quitar(item.idLavadora)" [attr.aria-label]="'Quitar ' + item.nombre">Quitar</button></article></section>
-<form #entrega="ngForm" class="order-summary" (ngSubmit)="confirmarAlquiler()"><h2>Resumen de tu reserva</h2><label for="direccion">Dirección de entrega en Itagüí</label><input id="direccion" name="direccion" [(ngModel)]="direccionEntrega" required minlength="8" maxlength="200" autocomplete="street-address" placeholder="Calle, número, barrio y apartamento" [disabled]="procesando"><div class="summary-row"><span>Pago</span><strong>Efectivo contra entrega</strong></div><div class="summary-row total"><span>Total estimado</span><strong>{{ calcularTotal() | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></div><p class="muted">El precio y la disponibilidad se verifican al confirmar. No se realizará ningún cobro en línea.</p><button type="submit" class="button" [disabled]="procesando || entrega.invalid || horasInvalidas.size > 0">{{ procesando ? 'Confirmando…' : usuarios.sesion() ? 'Confirmar reserva' : 'Iniciar sesión para reservar' }}</button></form></div>
-<section class="reservation-section"><div class="section-heading"><h2>{{ usuarios.esOperador() ? 'Reservas para gestionar' : 'Mis reservas' }}</h2><button class="text-button" *ngIf="usuarios.sesion()" (click)="cargarMisReservas()" [disabled]="cargandoReservas">Actualizar</button></div><p *ngIf="!usuarios.sesion()">Inicia sesión para consultar tus reservas. <a routerLink="/login">Entrar a mi cuenta</a></p><p *ngIf="cargandoReservas" role="status">Cargando reservas…</p><div *ngIf="errorReservas" class="notice error" role="alert">{{ errorReservas }} <button class="text-button" (click)="cargarMisReservas()">Reintentar</button></div><p *ngIf="usuarios.sesion() && !cargandoReservas && !errorReservas && !misReservas.length">Todavía no hay reservas para mostrar.</p><article *ngFor="let r of misReservas" class="reservation-row"><div><span class="status">{{ r.estado }}</span><h3>{{ r.nombreLavadora }}</h3><p>Reserva #{{ r.idReserva }} · {{ r.horasAlquiler }} horas · {{ r.fechaInicio | date:'dd MMM yyyy, HH:mm' }}</p><p>{{ r.direccionEntrega }}</p><p *ngIf="usuarios.esOperador()">{{ r.nombreCliente }}</p></div><div class="reservation-actions"><strong>{{ r.total | currency:'COP':'symbol-narrow':'1.0-0' }}</strong><span>Pago: {{ r.estadoPago }}</span><button class="button-secondary" *ngIf="!usuarios.esOperador() && r.estado === 'Activa'" [disabled]="accionPendiente !== null" (click)="operar(r, 'solicitar')">Solicitar recolección</button><button class="button-secondary" *ngIf="usuarios.esOperador() && r.estado !== 'Finalizada'" [disabled]="accionPendiente !== null" (click)="operar(r, 'finalizar')">Confirmar recolección</button><button class="button-secondary" *ngIf="usuarios.esOperador() && r.estadoPago !== 'Aprobado'" [disabled]="accionPendiente !== null" (click)="operar(r, 'pago')">Confirmar efectivo recibido</button></div></article></section></div>
+<div class="page-shell">
+  <div class="page-heading">
+    <h1>Tu próxima lavada,<br />más cerca.</h1>
+    <p>Revisa tu selección y cuéntanos dónde entregar.</p>
+  </div>
+  <p class="notice success" *ngIf="anuncio" role="status">{{ anuncio }}</p>
+  <p class="notice error" *ngIf="error" role="alert">{{ error }}</p>
+  <p class="notice" *ngIf="carrito.storageError()" role="status">{{ carrito.storageError() }}</p>
+  <div class="empty-state" *ngIf="!carrito.items().length">
+    <h2>Tu reserva empieza aquí.</h2>
+    <p>Elige una lavadora para comenzar.</p>
+    <a routerLink="/productos" class="button">Explorar lavadoras</a>
+  </div>
+  <div class="checkout-layout" *ngIf="carrito.items().length">
+    <section aria-label="Equipos elegidos">
+      <article class="cart-item" *ngFor="let item of carrito.items()">
+        <img
+          [src]="item.imagen || '/assets/lavadora-placeholder.svg'"
+          [alt]="item.nombre"
+          width="160"
+          height="140"
+        />
+        <div>
+          <h2>{{ item.nombre }}</h2>
+          <p>{{ item.precio | currency: 'COP' : 'symbol-narrow' : '1.0-0' }} / hora</p>
+          <label [for]="'horas-' + item.idLavadora">Horas de alquiler</label
+          ><input
+            [id]="'horas-' + item.idLavadora"
+            type="number"
+            min="1"
+            max="72"
+            step="1"
+            [ngModel]="item.horasAlquiler"
+            (ngModelChange)="cambiarHoras(item.idLavadora, $event)"
+            [disabled]="procesando"
+          /><strong>{{
+            item.precio * item.horasAlquiler | currency: 'COP' : 'symbol-narrow' : '1.0-0'
+          }}</strong>
+        </div>
+        <button
+          class="text-button"
+          [disabled]="procesando"
+          (click)="quitar(item.idLavadora)"
+          [attr.aria-label]="'Quitar ' + item.nombre"
+        >
+          Quitar
+        </button>
+      </article>
+    </section>
+    <form #entrega="ngForm" class="order-summary" (ngSubmit)="confirmarAlquiler()">
+      <h2>Resumen de tu reserva</h2>
+      <label for="direccion">Dirección de entrega en Itagüí</label
+      ><input
+        id="direccion"
+        name="direccion"
+        [(ngModel)]="direccionEntrega"
+        required
+        minlength="8"
+        maxlength="200"
+        autocomplete="street-address"
+        placeholder="Calle, número, barrio y apartamento"
+        [disabled]="procesando"
+      />
+      <div class="summary-row"><span>Pago</span><strong>Efectivo contra entrega</strong></div>
+      <div class="summary-row total">
+        <span>Total estimado</span
+        ><strong>{{ calcularTotal() | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</strong>
+      </div>
+      <p class="muted">
+        El precio y la disponibilidad se verifican al confirmar. No se realizará ningún cobro en
+        línea.
+      </p>
+      <button
+        type="submit"
+        class="button"
+        [disabled]="procesando || entrega.invalid || horasInvalidas.size > 0"
+      >
+        {{
+          procesando
+            ? 'Confirmando…'
+            : usuarios.sesion()
+              ? 'Confirmar reserva'
+              : 'Iniciar sesión para reservar'
+        }}
+      </button>
+    </form>
+  </div>
+  <section class="reservation-section">
+    <div class="section-heading">
+      <h2>{{ usuarios.esOperador() ? 'Reservas para gestionar' : 'Mis reservas' }}</h2>
+      <button
+        class="text-button"
+        *ngIf="usuarios.sesion()"
+        (click)="cargarMisReservas()"
+        [disabled]="cargandoReservas"
+      >
+        Actualizar
+      </button>
+    </div>
+    <p *ngIf="!usuarios.sesion()">
+      Inicia sesión para consultar tus reservas. <a routerLink="/login">Entrar a mi cuenta</a>
+    </p>
+    <p *ngIf="cargandoReservas" role="status">Cargando reservas…</p>
+    <div *ngIf="errorReservas" class="notice error" role="alert">
+      {{ errorReservas }}
+      <button class="text-button" (click)="cargarMisReservas()">Reintentar</button>
+    </div>
+    <p *ngIf="usuarios.sesion() && !cargandoReservas && !errorReservas && !misReservas.length">
+      Todavía no hay reservas para mostrar.
+    </p>
+    <article *ngFor="let r of misReservas" class="reservation-row">
+      <div>
+        <span class="status">{{ r.estado }}</span>
+        <h3>{{ r.nombreLavadora }}</h3>
+        <p>
+          Reserva #{{ r.idReserva }} · {{ r.horasAlquiler }} horas ·
+          {{ r.fechaInicio | date: 'dd MMM yyyy, HH:mm' }}
+        </p>
+        <p>{{ r.direccionEntrega }}</p>
+        <p *ngIf="usuarios.esOperador()">{{ r.nombreCliente }}</p>
+      </div>
+      <div class="reservation-actions">
+        <strong>{{ r.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</strong><span
+          >Pago: {{ r.estadoPago }}</span
+        ><button
+          class="button-secondary"
+          *ngIf="!usuarios.esOperador() && r.estado === 'Activa'"
+          [disabled]="accionPendiente !== null"
+          (click)="operar(r, 'solicitar')"
+        >
+          Solicitar recolección</button
+        ><button
+          class="button-secondary"
+          *ngIf="usuarios.esOperador() && r.estado !== 'Finalizada'"
+          [disabled]="accionPendiente !== null"
+          (click)="operar(r, 'finalizar')"
+        >
+          Confirmar recolección</button
+        ><button
+          class="button-secondary"
+          *ngIf="usuarios.esOperador() && r.estadoPago !== 'Aprobado'"
+          [disabled]="accionPendiente !== null"
+          (click)="operar(r, 'pago')"
+        >
+          Confirmar efectivo recibido
+        </button>
+      </div>
+    </article>
+  </section>
+</div>

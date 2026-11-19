@@ -1,7 +1,89 @@
-<div class="page-shell catalog-page"><div class="page-heading"><h1>Encuentra tu lavadora.</h1><p>Elige el equipo, define las horas y solicita la entrega en Itagüí.</p></div>
-<div class="catalog-layout"><aside class="filters" aria-label="Filtros del catálogo"><label for="buscar">Buscar equipo</label><input id="buscar" type="search" [(ngModel)]="textoBusqueda" (input)="aplicarFiltros()" placeholder="Marca, capacidad o barrio">
-<label for="categoria">Tipo de lavadora</label><select id="categoria" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()"><option>Todas</option><option>Carga Superior</option><option>Carga Frontal</option><option>Lavasecadora</option></select>
-<label class="check-label"><input type="checkbox" [(ngModel)]="soloDisponibles" (change)="aplicarFiltros()"> Solo disponibles</label><button class="text-button" (click)="limpiarFiltros()">Limpiar filtros</button><div class="filter-note"><h2>Así de sencillo.</h2><p>Alquiler de 1 a 72 horas. Pago en efectivo al recibir tu equipo.</p><p>La disponibilidad y el precio se verifican al confirmar.</p></div></aside>
-<section class="catalog-results" aria-label="Lavadoras"><p role="status" class="notice" *ngIf="cargando">Estamos buscando tus lavadoras…</p><div class="notice error" *ngIf="error" role="alert"><p>{{ error }}</p><button class="button-secondary" (click)="cargarLavadoras()">Volver a intentar</button></div><div class="empty-state" *ngIf="!cargando && !error && !lavadorasFiltradas.length"><h2>No encontramos equipos.</h2><p>Prueba con otra búsqueda o vuelve más tarde.</p><button class="button-secondary" (click)="limpiarFiltros()">Ver todos</button></div>
-<ng-container *ngIf="!cargando && !error"><div class="results-bar"><span>{{ lavadorasFiltradas.length }} equipos</span><a routerLink="/compras">Ir a mi reserva <span aria-hidden="true">↗</span></a></div><div class="product-grid"><article class="product-card" *ngFor="let lav of lavadorasFiltradas"><div class="product-image"><img [src]="lav.imagen || '/assets/lavadora-placeholder.svg'" (error)="imagenError($event)" [alt]="lav.nombre" width="480" height="360" loading="lazy"><span class="status" [class.unavailable]="!lav.disponible">{{ lav.disponible ? 'Disponible' : 'No disponible' }}</span></div><div class="product-details"><p class="product-capacity">{{ lav.capacidadKg }} kg · {{ lav.categoria }}</p><h2>{{ lav.nombre }}</h2><p class="muted">{{ lav.modelo }}</p><p class="product-features">{{ lav.caracteristicas }}</p><div class="product-price"><strong>{{ lav.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</strong><span>/ hora</span></div><button class="button" (click)="reservarLavadora(lav)" [disabled]="!lav.disponible || agregado(lav.idLavadora)">{{ agregado(lav.idLavadora) ? 'Agregada a tu reserva' : 'Elegir lavadora' }}</button></div></article></div></ng-container>
-<p class="notice success" role="status" *ngIf="anuncio">{{ anuncio }} <a routerLink="/compras">Revisar reserva</a></p></section></div></div>
+<div class="page-shell catalog-page">
+  <div class="page-heading">
+    <h1>Encuentra tu lavadora.</h1>
+    <p>Elige el equipo, define las horas y solicita la entrega en Itagüí.</p>
+  </div>
+  <div class="catalog-layout">
+    <aside class="filters" aria-label="Filtros del catálogo">
+      <label for="buscar">Buscar equipo</label
+      ><input
+        id="buscar"
+        type="search"
+        [(ngModel)]="textoBusqueda"
+        (input)="aplicarFiltros()"
+        placeholder="Marca, capacidad o barrio"
+      />
+      <label for="categoria">Tipo de lavadora</label
+      ><select id="categoria" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
+        <option>Todas</option>
+        <option>Carga Superior</option>
+        <option>Carga Frontal</option>
+        <option>Lavasecadora</option>
+      </select>
+      <label class="check-label"
+        ><input type="checkbox" [(ngModel)]="soloDisponibles" (change)="aplicarFiltros()" /> Solo
+        disponibles</label
+      ><button class="text-button" (click)="limpiarFiltros()">Limpiar filtros</button>
+      <div class="filter-note">
+        <h2>Así de sencillo.</h2>
+        <p>Alquiler de 1 a 72 horas. Pago en efectivo al recibir tu equipo.</p>
+        <p>La disponibilidad y el precio se verifican al confirmar.</p>
+      </div>
+    </aside>
+    <section class="catalog-results" aria-label="Lavadoras">
+      <p role="status" class="notice" *ngIf="cargando">Estamos buscando tus lavadoras…</p>
+      <div class="notice error" *ngIf="error" role="alert">
+        <p>{{ error }}</p>
+        <button class="button-secondary" (click)="cargarLavadoras()">Volver a intentar</button>
+      </div>
+      <div class="empty-state" *ngIf="!cargando && !error && !lavadorasFiltradas.length">
+        <h2>No encontramos equipos.</h2>
+        <p>Prueba con otra búsqueda o vuelve más tarde.</p>
+        <button class="button-secondary" (click)="limpiarFiltros()">Ver todos</button>
+      </div>
+      <ng-container *ngIf="!cargando && !error"
+        ><div class="results-bar">
+          <span>{{ lavadorasFiltradas.length }} equipos</span
+          ><a routerLink="/compras">Ir a mi reserva <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="product-grid">
+          <article class="product-card" *ngFor="let lav of lavadorasFiltradas">
+            <div class="product-image">
+              <img
+                [src]="lav.imagen || '/assets/lavadora-placeholder.svg'"
+                (error)="imagenError($event)"
+                [alt]="lav.nombre"
+                width="480"
+                height="360"
+                loading="lazy"
+              /><span class="status" [class.unavailable]="!lav.disponible">{{
+                lav.disponible ? 'Disponible' : 'No disponible'
+              }}</span>
+            </div>
+            <div class="product-details">
+              <p class="product-capacity">{{ lav.capacidadKg }} kg · {{ lav.categoria }}</p>
+              <h2>{{ lav.nombre }}</h2>
+              <p class="muted">{{ lav.modelo }}</p>
+              <p class="product-features">{{ lav.caracteristicas }}</p>
+              <div class="product-price">
+                <strong>{{ lav.precio | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</strong><span
+                  >/ hora</span
+                >
+              </div>
+              <button
+                class="button"
+                (click)="reservarLavadora(lav)"
+                [disabled]="!lav.disponible || agregado(lav.idLavadora)"
+              >
+                {{ agregado(lav.idLavadora) ? 'Agregada a tu reserva' : 'Elegir lavadora' }}
+              </button>
+            </div>
+          </article>
+        </div></ng-container
+      >
+      <p class="notice success" role="status" *ngIf="anuncio">
+        {{ anuncio }} <a routerLink="/compras">Revisar reserva</a>
+      </p>
+    </section>
+  </div>
+</div>

@@ -12,10 +12,11 @@ describe('Carrito', () => {
   let fixture: ComponentFixture<Carrito>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
-      imports: [FormsModule, CommonModule], declarations: [Carrito]
-    })
-    .compileComponents();
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+      imports: [FormsModule, CommonModule],
+      declarations: [Carrito],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Carrito);
     component = fixture.componentInstance;
